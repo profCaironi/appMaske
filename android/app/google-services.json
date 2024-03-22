@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "926515196151",
+    "project_id": "maskenote-ed4f5",
+    "storage_bucket": "maskenote-ed4f5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:926515196151:android:6dd867d47a0770c28ae3f2",
+        "android_client_info": {
+          "package_name": "com.example.primaprova"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYKzLDWH4BWYVb2V6SWGyA4c1oysvcvjA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
