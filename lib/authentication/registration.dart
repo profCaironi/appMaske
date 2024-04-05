@@ -72,7 +72,7 @@ class _RegistrationState extends State<Registration> {
                   email: email, 
                   password: password);
                   Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context)=> const HomePage())
+                    MaterialPageRoute(builder: (context)=>  HomePage())
                   );
                },
                child: const Text('Registrati!'),

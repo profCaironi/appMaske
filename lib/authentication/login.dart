@@ -71,7 +71,7 @@ class _LoginState extends State<Login> {
                 try {
                   await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
                   Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context)=> const HomePage())
+                    MaterialPageRoute(builder: (context)=>  HomePage())
                   );
                 } on FirebaseAuthException catch (e) {
                   if(e.code == "invalid-email"){

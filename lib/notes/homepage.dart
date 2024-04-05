@@ -1,52 +1,116 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+
+class Note{
+  String text;
+  Color color;
+
+  Note({
+    required this.text,
+    this.color = Colors.grey
+  });
+}
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
-
   @override
-  State<HomePage> createState() => _HomePageState();
+  _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-
-  final List<String> _messages = [];
+  final List<Note> _messages = [];
   final TextEditingController _controller = TextEditingController();
 
-  void _showAddMessage() async {
+  List<Color> coloriDisponibili = [
+    Colors.red,
+    Colors.orange,
+    Colors.green,
+    Colors.yellow,
+    Colors.blue,
+    Colors.purple
+  ];
+
+  void _showColor(int index) async {
     await showDialog(
-      context: context,
+      context: context, 
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Inserisci una nota"),
-          content: TextField(
-            controller: _controller,
-          ),
-          actions:[
-            TextButton(onPressed: 
-            () {
-              Navigator.pop(context);
-            }, 
-            child: Text("Annulla")
-            ),
-            TextButton(
-              onPressed: () {
-                if(_controller.text.isNotEmpty){
-                  setState(
-                    () {
-                    _messages.add(_controller.text);
-                    _controller.clear();
-                  }
-                  );
+          title: const Text("Scegli un colore!"),
+          content: Wrap(
+            children: List<Widget>.generate(coloriDisponibili.length, (int colorIndex) {
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _messages[index].color = coloriDisponibili[colorIndex];
+                  });
                   Navigator.pop(context);
-                }
-              },
-               child: Text("Ok")
-               )
+                },
+                child: Container(
+                  margin: const EdgeInsets.all(4),
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: coloriDisponibili[colorIndex],
+                    shape: BoxShape.circle,
+                  ),
+                )
+              );
+            } 
+            )
+          ),
+          actions: <Widget>[
+            TextButton(onPressed: () {
+              Navigator.pop(context);
+            }, child: Text("Annulla"))
           ]
         );
       }
+      );
+  }
+
+  void _showAddOrEditMessage({String? initialText, int? index}) async {
+    if(initialText !=null){
+      _controller.text = initialText;
+    }
+    await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Inserisci un messaggio'),
+          content: TextField(
+            controller: _controller,
+            decoration: InputDecoration(hintText: "Scrivi qualcosa qui"),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Annulla'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            TextButton(
+              child: Text('Ok'),
+              onPressed: () {
+                if (_controller.text.isNotEmpty) {
+                  setState(() {
+                    if(index == null){
+                      _messages.add(
+                        Note(text: _controller.text, color: Colors.grey)
+                      );
+                    }
+                    else{
+                      _messages[index].text = _controller.text;
+                    }          
+                    _controller.clear();
+                  });
+                  Navigator.pop(context);
+                }
+              },
+            ),
+            if(index != null)
+            IconButton(onPressed: () => _showColor(index),
+             icon: const Icon(Icons.palette))
+          ],
+        );
+      },
     );
   }
 
@@ -54,9 +118,69 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("HomePage"),
+        backgroundColor: Colors.deepPurple,
+        title: Text('Lista di Messaggi'),
+        actions: [
+          IconButton(onPressed: _showAddOrEditMessage, icon: const Icon(Icons.add_alert)),
+        ]
       ),
-      body: Text("Benvenuto nella homepage"),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            const DrawerHeader(
+              child: Text("Menù"),
+              decoration: BoxDecoration(
+                color: Colors.amber
+              ),
+              ),
+            ListTile(
+              title: Text("Aggiungi nota"),
+              onTap: () {
+                Navigator.pop(context);
+                _showAddOrEditMessage();
+              },
+            ),
+            ListTile(
+              title: Text("Impostazioni"),
+              onTap: () {
+                Navigator.pop(context);
+                //TODO crea pagina impostazioni
+              },
+            ),
+            ListTile(
+              title: Text("Profilo"),
+              onTap: () {
+                Navigator.pop(context);
+                //TODO crea pagina profilo
+              },
+            ),
+          ],
+        )
+      ),
+      body: ListView.builder(
+        itemCount: _messages.length,
+        itemBuilder: (context, index){
+          return Container(
+            color: _messages[index].color,
+            child: ListTile(
+              title: Text(_messages[index].text),
+              onTap: () {
+                _showAddOrEditMessage(initialText: _messages[index].text, index: index);
+              },
+              trailing: IconButton(
+                icon: Icon(Icons.delete),
+                onPressed: () {
+                  setState(() {
+                    _messages.removeAt(index);
+                  });
+                },
+                ),
+            
+            ),
+          );
+        }
+        )
     );
   }
 }
